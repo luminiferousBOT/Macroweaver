@@ -1,0 +1,309 @@
+/* ── About Page ─────────────────────────────────────────────────── */
+
+.about-section {
+  padding: var(--space-12) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.about-section:last-child {
+  border-bottom: none;
+}
+
+.about-section__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.about-section__number {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.about-section__body {
+  max-width: 800px;
+}
+
+
+/* ── Equation ───────────────────────────────────────────────────── */
+.about-equation {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-10);
+  margin: var(--space-6) 0;
+  text-align: center;
+}
+
+.about-equation__formula {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+
+/* ── GDP Terms ──────────────────────────────────────────────────── */
+.about-term {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+}
+
+.about-term__symbol {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+}
+
+.about-term strong {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+}
+
+
+/* ── Flow Diagram ───────────────────────────────────────────────── */
+.about-flow {
+  position: relative;
+  padding-left: var(--space-8);
+}
+
+.about-flow::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border-strong);
+}
+
+.about-flow__step {
+  position: relative;
+  display: flex;
+  gap: var(--space-5);
+  padding-bottom: var(--space-8);
+}
+
+.about-flow__step:last-child {
+  padding-bottom: 0;
+}
+
+.about-flow__dot {
+  position: absolute;
+  left: calc(-1 * var(--space-8) + 4px);
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-dark);
+  border: 3px solid var(--bg-primary);
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.about-flow__content h4 {
+  margin-bottom: var(--space-2);
+}
+
+.about-flow__content code {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  background: rgba(13, 13, 12, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+
+/* ── Policy Levers ──────────────────────────────────────────────── */
+.about-levers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.about-lever {
+  position: relative;
+}
+
+.about-lever__name {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.about-lever__range {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  display: block;
+  margin-bottom: var(--space-3);
+}
+
+.about-lever__effects {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
+.about-lever__effect {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.01em;
+}
+
+.about-lever__effect--positive {
+  background: var(--positive-bg);
+  color: var(--positive);
+}
+
+.about-lever__effect--negative {
+  background: var(--negative-bg);
+  color: var(--negative);
+}
+
+.about-lever__effect--neutral {
+  background: rgba(13, 13, 12, 0.05);
+  color: var(--text-tertiary);
+}
+
+
+/* ── Coefficient Table ──────────────────────────────────────────── */
+.about-table-wrap {
+  overflow-x: auto;
+  padding: var(--space-4);
+}
+
+.about-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+}
+
+.about-table th {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.about-table th:first-child {
+  text-align: left;
+}
+
+.about-table td {
+  padding: var(--space-3) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.about-table__label {
+  text-align: left !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.about-table--pos {
+  color: var(--positive);
+  font-weight: 600;
+}
+
+.about-table--neg {
+  color: var(--negative);
+  font-weight: 600;
+}
+
+.about-table--neutral {
+  color: var(--text-tertiary);
+}
+
+
+/* ── Outputs ────────────────────────────────────────────────────── */
+.about-outputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.about-output {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+
+.about-output__icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+}
+
+.about-output h4 {
+  margin-bottom: var(--space-1);
+}
+
+
+/* ── Disclaimer ─────────────────────────────────────────────────── */
+.about-disclaimer {
+  margin-top: var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  background: var(--warning-bg);
+  border-left: 3px solid var(--warning);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .about-terms.grid--2 {
+    grid-template-columns: 1fr;
+  }
+
+  .about-equation {
+    padding: var(--space-6);
+  }
+
+  .about-equation__formula {
+    font-size: 1.25rem;
+  }
+
+  .about-table {
+    font-size: 0.75rem;
+  }
+}
