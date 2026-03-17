@@ -4,7 +4,7 @@ Macroweaver is an interactive, web-based simulator designed to model the macroec
 
 ## Live Demo
 
-**[Visit the Live Website Here](https://macroweaver-sigma.vercel.app/)** 
+**[Visit the Live Website Here](https://macroweaver.vercel.app/)** 
 
 ## Project Overview
 
