@@ -172,6 +172,65 @@ img {
   gap: var(--space-1);
 }
 
+.nav__toggle {
+  display: none;
+  width: 32px;
+  height: 32px;
+  position: relative;
+  z-index: 102;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.nav__toggle:hover {
+  background: rgba(13, 13, 12, 0.04);
+}
+
+.nav__hamburger {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.nav__hamburger::before,
+.nav__hamburger::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.nav__hamburger::before { top: -6px; }
+.nav__hamburger::after { bottom: -6px; }
+
+.nav__hamburger--open {
+  background: transparent;
+}
+
+.nav__hamburger--open::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.nav__hamburger--open::after {
+  bottom: 0;
+  transform: rotate(-45deg);
+}
+
+.nav__overlay {
+  display: none;
+}
+
 .nav__link {
   font-family: var(--font-sans);
   font-size: 0.875rem;
@@ -664,8 +723,47 @@ input[type="range"]::-moz-range-thumb {
     padding: 0 var(--space-5);
   }
 
+  .nav__toggle {
+    display: block;
+  }
+
   .nav__links {
-    display: none;
+    position: fixed;
+    top: 0;
+    right: -280px;
+    bottom: 0;
+    width: 280px;
+    background: var(--bg-primary);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-20) var(--space-6) var(--space-6);
+    gap: var(--space-4);
+    box-shadow: -8px 0 32px rgba(13, 13, 12, 0.1);
+    transition: right var(--transition-base);
+    z-index: 101;
+  }
+
+  .nav__links--open {
+    right: 0;
+  }
+
+  .nav__overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(13, 13, 12, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 100;
+  }
+
+  .nav__link {
+    width: 100%;
+    font-size: 1.125rem;
+    padding: var(--space-3) var(--space-4);
   }
 
   .card {

@@ -1,7 +1,16 @@
-import { NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import logo from '../assets/logo.png'
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
+  const location = useLocation()
+
+  // Close menu when route changes
+  useEffect(() => {
+    setIsOpen(false)
+  }, [location])
+
   return (
     <nav className="nav">
       <NavLink to="/" className="nav__logo">
@@ -9,7 +18,7 @@ export default function Navbar() {
         Macroweaver
       </NavLink>
 
-      <div className="nav__links">
+      <div className={`nav__links ${isOpen ? 'nav__links--open' : ''}`}>
         <NavLink
           to="/"
           end
@@ -44,6 +53,17 @@ export default function Navbar() {
           About
         </NavLink>
       </div>
+
+      <button 
+        className="nav__toggle" 
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
+      >
+        <span className={`nav__hamburger ${isOpen ? 'nav__hamburger--open' : ''}`}></span>
+      </button>
+
+      {/* Overlay to close menu when clicking outside on mobile */}
+      {isOpen && <div className="nav__overlay" onClick={() => setIsOpen(false)}></div>}
     </nav>
   )
 }
