@@ -21,12 +21,14 @@ The project is structured as a decoupled application:
 *   **Frontend Client:** A Single Page Application (SPA) built with React and Vite. It utilizes a custom design system inspired by modern editorial interfaces, featuring responsive data visualization via Recharts.
 *   **Backend Application Programming Interface (API):** A high-performance Python service built on FastAPI. It manages the economic modeling logic, data ingestion, and asynchronous communication with external AI providers.
 
-### Technology Stack
+## Tech Stack
 
-*   **Backend:** Python 3, FastAPI, Pandas, NumPy, Pydantic, Uvicorn
-*   **Frontend:** JavaScript (ES6+), React 18, Vite, React Router DOM, Recharts, Vanilla CSS
+*   **Frontend Environment:** React, Vite, JavaScript (ES6+), Vanilla CSS
+*   **Data Visualization:** Recharts
+*   **Backend Infrastructure:** Python 3, FastAPI, Uvicorn, Pydantic
+*   **Data Processing:** Pandas, NumPy
 *   **Artificial Intelligence:** Groq API (Llama 3.3 Versatile)
-*   **Data Source:** World Bank API (`wbgapi`)
+*   **External Data Integration:** World Bank API (`wbgapi`)
 
 ## Local Development Setup
 
