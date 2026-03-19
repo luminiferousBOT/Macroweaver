@@ -43,7 +43,7 @@ class PolicyInput:
     def validate(self) -> None:
         """Raise ValueError if any lever is out of range."""
         _check("tax_rate", self.tax_rate, 0, 50)
-        _check("subsidy", self.subsidy, 0, 30)
+        _check("subsidy", self.subsidy, 0, 100)
         _check("interest_rate", self.interest_rate, 0, 15)
         _check("gov_spending", self.gov_spending, 0, 40)
         _check("import_tariff", self.import_tariff, 0, 50)
