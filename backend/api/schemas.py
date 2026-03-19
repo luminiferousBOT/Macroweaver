@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 class PolicyInputSchema(BaseModel):
     """User-adjustable policy levers."""
     tax_rate: float = Field(25.0, ge=0, le=50, description="Tax rate (%)")
-    subsidy: float = Field(5.0, ge=0, le=30, description="Agriculture subsidy (% of GDP)")
+    subsidy: float = Field(5.0, ge=0, le=100, description="Agriculture subsidy (% of GDP)")
     interest_rate: float = Field(6.0, ge=0, le=15, description="Central bank interest rate (%)")
     gov_spending: float = Field(11.0, ge=0, le=40, description="Government spending (% of GDP)")
     import_tariff: float = Field(10.0, ge=0, le=50, description="Import tariff (%)")
