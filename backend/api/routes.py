@@ -7,16 +7,19 @@ from __future__ import annotations
 from dataclasses import asdict
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 
 from backend.ai.explainer import AIExplainer
 from backend.api.schemas import (
     ComparisonRequestSchema,
     ComparisonResponseSchema,
     DefaultsResponseSchema,
+    ExportReportRequestSchema,
     HealthResponseSchema,
     PolicyInputSchema,
     SimulationResponseSchema,
 )
+from backend.api.report_generator import generate_pdf, generate_csv
 from backend.models.economic_model import (
     EconomicSimulator,
     PolicyInput,
@@ -205,3 +208,58 @@ async def compare(request: ComparisonRequestSchema):
         raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Comparison error: {str(e)}")
+
+
+# ── Export Report ─────────────────────────────────────────────────────────
+
+@router.post("/export-report")
+async def export_report(request: ExportReportRequestSchema):
+    """
+    Generate a professional PDF report from simulation data.
+    Returns the PDF as a downloadable file.
+    """
+    try:
+        pdf_buffer = generate_pdf(
+            policy_inputs=request.policy_inputs,
+            simulation_results=request.simulation_results,
+            ai_explanation=request.ai_explanation,
+            chart_images=request.chart_images,
+            shock_type=request.shock_type,
+            shock_intensity=request.shock_intensity,
+        )
+        return StreamingResponse(
+            pdf_buffer,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": "attachment; filename=MacroWeaver_Report.pdf",
+            },
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation error: {str(e)}")
+
+
+@router.post("/export-csv")
+async def export_csv(request: ExportReportRequestSchema):
+    """
+    Generate a CSV export of policy inputs and simulation results.
+    Returns the CSV as a downloadable file.
+    """
+    try:
+        csv_buffer = generate_csv(
+            policy_inputs=request.policy_inputs,
+            simulation_results=request.simulation_results,
+            shock_type=request.shock_type,
+            shock_intensity=request.shock_intensity,
+        )
+        # Convert StringIO to bytes for StreamingResponse
+        import io
+        byte_buffer = io.BytesIO(csv_buffer.getvalue().encode("utf-8"))
+        return StreamingResponse(
+            byte_buffer,
+            media_type="text/csv",
+            headers={
+                "Content-Disposition": "attachment; filename=MacroWeaver_Data.csv",
+            },
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"CSV generation error: {str(e)}")

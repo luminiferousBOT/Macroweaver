@@ -36,6 +36,16 @@ class ComparisonRequestSchema(BaseModel):
     policy_b: PolicyInputSchema
 
 
+class ExportReportRequestSchema(BaseModel):
+    """Data needed to generate an export report (PDF or CSV)."""
+    policy_inputs: dict = Field(..., description="Policy lever values used in the simulation")
+    simulation_results: dict = Field(..., description="Simulation output metrics")
+    ai_explanation: str = Field("", description="AI-generated analysis text")
+    chart_images: list = Field(default_factory=list, description="Base64-encoded chart PNG strings")
+    shock_type: Optional[str] = Field(None, description="Active shock type, if any")
+    shock_intensity: Optional[str] = Field(None, description="Shock intensity level")
+
+
 # ── Response schemas ──────────────────────────────────────────────────────
 
 class SimulationResponseSchema(BaseModel):

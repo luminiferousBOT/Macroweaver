@@ -7,6 +7,7 @@ import PolicySlider from '../components/PolicySlider'
 import MetricCard from '../components/MetricCard'
 import AIExplanation from '../components/AIExplanation'
 import ShockSelector from '../components/ShockSelector'
+import ExportReport from '../components/ExportReport'
 import { fetchDefaults, runSimulation } from '../api'
 import './Simulator.css'
 
@@ -36,6 +37,7 @@ export default function Simulator() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const resultsRef = useRef(null)
+  const chartRef = useRef(null)
 
   // Load defaults on mount
   useEffect(() => {
@@ -258,7 +260,7 @@ export default function Simulator() {
                     <p className="text-caption" style={{ marginBottom: 'var(--space-4)' }}>
                       GDP Component Breakdown
                     </p>
-                    <div className="card" style={{ padding: 'var(--space-6)' }}>
+                    <div className="card" style={{ padding: 'var(--space-6)' }} ref={chartRef}>
                       <ResponsiveContainer width="100%" height={280}>
                         <BarChart data={chartData} layout="vertical" barCategoryGap="25%">
                           <CartesianGrid strokeDasharray="3 3" stroke="rgba(13,13,12,0.08)" horizontal={false} />
@@ -306,6 +308,17 @@ export default function Simulator() {
                     loading={loading}
                   />
                 </div>
+
+                {/* Export Report */}
+                {results && !loading && (
+                  <ExportReport
+                    policies={policies}
+                    results={results}
+                    chartRef={chartRef}
+                    shockType={shockType}
+                    shockIntensity={shockIntensity}
+                  />
+                )}
               </>
             )}
           </div>
