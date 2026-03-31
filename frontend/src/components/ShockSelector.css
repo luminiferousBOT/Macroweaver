@@ -1,0 +1,232 @@
+/* ── ShockSelector ──────────────────────────────────────────────────── */
+
+.shock-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.shock-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.25rem;
+}
+
+.shock-section-header h3 {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.shock-header-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.shock-section-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--text-muted, var(--text-tertiary));
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+/* ── Shock Toggle Grid ─────────────────────────────────────────────── */
+
+.shock-toggle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.shock-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast),
+              color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.shock-toggle-btn:hover {
+  border-color: var(--border-strong);
+  background: rgba(13, 13, 12, 0.02);
+}
+
+.shock-toggle-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 1px rgba(45, 90, 61, 0.1);
+}
+
+.shock-toggle-btn.active .shock-btn-icon {
+  color: var(--accent);
+}
+
+.shock-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: color var(--transition-fast);
+}
+
+.shock-toggle-btn:hover .shock-btn-icon {
+  color: var(--text-secondary);
+}
+
+.shock-btn-label {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ── Clear Shock ───────────────────────────────────────────────────── */
+
+.shock-clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color var(--transition-fast),
+              color var(--transition-fast);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.75rem;
+}
+
+.shock-clear-btn:hover {
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+}
+
+/* ── Intensity Control ─────────────────────────────────────────────── */
+
+.shock-intensity-section {
+  animation: shockFadeIn 0.25s ease;
+}
+
+.shock-intensity-label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.shock-intensity-track {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.shock-intensity-option {
+  padding: 0.45rem 0.25rem;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
+  border: none;
+  border-right: 1px solid var(--border);
+}
+
+.shock-intensity-option:last-child {
+  border-right: none;
+}
+
+.shock-intensity-option:hover {
+  color: var(--text-secondary);
+  background: rgba(13, 13, 12, 0.02);
+}
+
+.shock-intensity-option.active {
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+/* ── Active Shock Banner ───────────────────────────────────────────── */
+
+.shock-active-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--accent-subtle);
+  border: 1px solid rgba(45, 90, 61, 0.12);
+  border-radius: var(--radius-sm);
+  animation: shockFadeIn 0.25s ease;
+}
+
+.shock-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  animation: shockPulse 2s ease-in-out infinite;
+}
+
+.shock-active-text {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ── Animations ────────────────────────────────────────────────────── */
+
+@keyframes shockFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shockPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .shock-toggle-grid {
+    grid-template-columns: 1fr;
+  }
+}

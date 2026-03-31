@@ -19,6 +19,16 @@ class PolicyInputSchema(BaseModel):
     gov_spending: float = Field(11.0, ge=0, le=40, description="Government spending (% of GDP)")
     import_tariff: float = Field(10.0, ge=0, le=50, description="Import tariff (%)")
 
+    # External shock simulation (optional)
+    shock_type: Optional[str] = Field(
+        None,
+        description="External shock: oil_price, global_recession, export_boom, pandemic",
+    )
+    shock_intensity: Optional[str] = Field(
+        "medium",
+        description="Shock intensity: low, medium, high",
+    )
+
 
 class ComparisonRequestSchema(BaseModel):
     """Side-by-side comparison of two policies."""
@@ -40,6 +50,8 @@ class SimulationResponseSchema(BaseModel):
     gov_spending_delta: float = Field(0.0, description="Change in govt spending component")
     net_exports_delta: float = Field(0.0, description="Change in net exports component")
     ai_explanation: str = Field("", description="AI-generated explanation")
+    shock_active: Optional[str] = Field(None, description="Active shock type, if any")
+    shock_label: Optional[str] = Field(None, description="Human-readable shock name")
 
 
 class ComparisonResponseSchema(BaseModel):

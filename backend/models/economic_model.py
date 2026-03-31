@@ -142,6 +142,56 @@ COEFFICIENTS = {
 FISCAL_MULTIPLIER = 1.5
 
 
+# ── External Shock Profiles ──────────────────────────────────────────────
+# Each shock defines **additive** adjustments (at medium intensity) to the
+# five output indicators.  These are applied *after* the normal policy
+# simulation, so the core model logic is untouched.
+
+SHOCK_PROFILES = {
+    "oil_price": {
+        "gdp_growth":     -1.5,
+        "inflation":      +2.5,
+        "unemployment":   +0.3,
+        "fiscal_deficit": +0.8,
+        "trade_balance":  -0.6,
+    },
+    "global_recession": {
+        "gdp_growth":     -3.0,
+        "inflation":      -0.5,
+        "unemployment":   +1.8,
+        "fiscal_deficit": +1.2,
+        "trade_balance":  -1.5,
+    },
+    "export_boom": {
+        "gdp_growth":     +2.0,
+        "inflation":      +0.3,
+        "unemployment":   -0.8,
+        "fiscal_deficit": -0.5,
+        "trade_balance":  +2.5,
+    },
+    "pandemic": {
+        "gdp_growth":     -4.5,
+        "inflation":      +1.0,
+        "unemployment":   +3.0,
+        "fiscal_deficit": +2.5,
+        "trade_balance":  -1.0,
+    },
+}
+
+INTENSITY_MULTIPLIERS = {
+    "low":    0.5,
+    "medium": 1.0,
+    "high":   1.5,
+}
+
+SHOCK_LABELS = {
+    "oil_price":        "Oil Price Shock",
+    "global_recession": "Global Recession",
+    "export_boom":      "Export Boom",
+    "pandemic":         "Pandemic Shock",
+}
+
+
 # ── Simulator ─────────────────────────────────────────────────────────────
 
 class EconomicSimulator:
@@ -288,6 +338,60 @@ class EconomicSimulator:
             results_a=results_a.to_dict(),
             policy_b=asdict(policy_b),
             results_b=results_b.to_dict(),
+        )
+
+    @staticmethod
+    def apply_shock(
+        result: SimulationResult,
+        shock_type: str,
+        intensity: str = "medium",
+    ) -> SimulationResult:
+        """
+        Apply an external shock to an existing simulation result.
+
+        The shock adjustments are **additive** — they modify the values
+        produced by the normal policy simulation.  This keeps the core
+        model clean and allows shocks to stack naturally on top of any
+        policy configuration.
+
+        Parameters
+        ----------
+        result : SimulationResult
+            Output from a prior `simulate()` call.
+        shock_type : str
+            One of: oil_price, global_recession, export_boom, pandemic.
+        intensity : str
+            One of: low, medium, high.
+
+        Returns
+        -------
+        SimulationResult
+            A new result with shock adjustments applied.
+        """
+        profile = SHOCK_PROFILES.get(shock_type)
+        if profile is None:
+            raise ValueError(
+                f"Unknown shock type '{shock_type}'. "
+                f"Valid options: {list(SHOCK_PROFILES.keys())}"
+            )
+        mult = INTENSITY_MULTIPLIERS.get(intensity, 1.0)
+
+        return SimulationResult(
+            gdp_growth=round(result.gdp_growth + profile["gdp_growth"] * mult, 2),
+            inflation=round(result.inflation + profile["inflation"] * mult, 2),
+            unemployment=max(0.0, min(100.0, round(
+                result.unemployment + profile["unemployment"] * mult, 2
+            ))),
+            fiscal_deficit=round(
+                result.fiscal_deficit + profile["fiscal_deficit"] * mult, 2
+            ),
+            trade_balance=round(
+                result.trade_balance + profile["trade_balance"] * mult, 2
+            ),
+            consumption_delta=result.consumption_delta,
+            investment_delta=result.investment_delta,
+            gov_spending_delta=result.gov_spending_delta,
+            net_exports_delta=result.net_exports_delta,
         )
 
 

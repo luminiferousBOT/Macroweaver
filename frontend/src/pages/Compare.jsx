@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 import PolicySlider from '../components/PolicySlider'
 import AIExplanation from '../components/AIExplanation'
+import ShockSelector from '../components/ShockSelector'
 import { fetchDefaults, runComparison } from '../api'
 import './Compare.css'
 
@@ -52,6 +53,8 @@ export default function Compare() {
   const [scenarioB, setScenarioB] = useState({
     tax_rate: 12, subsidy: 20, interest_rate: 4, gov_spending: 18, import_tariff: 10,
   })
+  const [shockA, setShockA] = useState({ type: null, intensity: 'medium' })
+  const [shockB, setShockB] = useState({ type: null, intensity: 'medium' })
   const [labelA, setLabelA] = useState('Scenario A')
   const [labelB, setLabelB] = useState('Scenario B')
 
@@ -74,7 +77,17 @@ export default function Compare() {
     setLoading(true)
     setError(null)
     try {
-      const data = await runComparison(scenarioA, scenarioB)
+      const payloadA = {
+        ...scenarioA,
+        shock_type: shockA.type,
+        shock_intensity: shockA.intensity,
+      }
+      const payloadB = {
+        ...scenarioB,
+        shock_type: shockB.type,
+        shock_intensity: shockB.intensity,
+      }
+      const data = await runComparison(payloadA, payloadB)
       setResults(data)
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -162,6 +175,11 @@ export default function Compare() {
                 />
               ))}
             </div>
+            <ShockSelector
+              shockType={shockA.type}
+              shockIntensity={shockA.intensity}
+              onChange={({ shock_type, shock_intensity }) => setShockA({ type: shock_type, intensity: shock_intensity })}
+            />
           </div>
 
           {/* VS Divider */}
@@ -204,6 +222,11 @@ export default function Compare() {
                 />
               ))}
             </div>
+            <ShockSelector
+              shockType={shockB.type}
+              shockIntensity={shockB.intensity}
+              onChange={({ shock_type, shock_intensity }) => setShockB({ type: shock_type, intensity: shock_intensity })}
+            />
           </div>
         </div>
 
@@ -227,9 +250,37 @@ export default function Compare() {
         {/* ─── Results ──────────────────────────────────── */}
         {(results || loading) && (
           <div ref={resultsRef} className="compare-results">
-            <p className="text-caption" style={{ marginBottom: 'var(--space-6)' }}>
-              Comparison Results
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-6)', flexWrap: 'wrap' }}>
+              <p className="text-caption" style={{ margin: 0 }}>
+                Comparison Results
+              </p>
+              {results?.results_a?.shock_active && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                  padding: '0.2rem 0.6rem', borderRadius: '99px',
+                  background: 'var(--accent-subtle)',
+                  border: '1px solid rgba(45, 90, 61, 0.15)',
+                  fontSize: '0.72rem', fontFamily: 'var(--font-sans)',
+                  color: 'var(--accent)', fontWeight: 500,
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+                  A: {results.results_a.shock_label}
+                </span>
+              )}
+              {results?.results_b?.shock_active && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                  padding: '0.2rem 0.6rem', borderRadius: '99px',
+                  background: 'rgba(122, 104, 80, 0.08)',
+                  border: '1px solid rgba(122, 104, 80, 0.15)',
+                  fontSize: '0.72rem', fontFamily: 'var(--font-sans)',
+                  color: '#7A6850', fontWeight: 500,
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+                  B: {results.results_b.shock_label}
+                </span>
+              )}
+            </div>
 
             {/* Metric Table */}
             <div className="card compare-table-wrap">

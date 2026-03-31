@@ -6,6 +6,7 @@ import {
 import PolicySlider from '../components/PolicySlider'
 import MetricCard from '../components/MetricCard'
 import AIExplanation from '../components/AIExplanation'
+import ShockSelector from '../components/ShockSelector'
 import { fetchDefaults, runSimulation } from '../api'
 import './Simulator.css'
 
@@ -29,6 +30,8 @@ export default function Simulator() {
   const [policies, setPolicies] = useState({
     tax_rate: 18, subsidy: 5, interest_rate: 6.5, gov_spending: 11, import_tariff: 5,
   })
+  const [shockType, setShockType] = useState(null)
+  const [shockIntensity, setShockIntensity] = useState('medium')
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -56,7 +59,12 @@ export default function Simulator() {
     setLoading(true)
     setError(null)
     try {
-      const data = await runSimulation(policies)
+      const payload = {
+        ...policies,
+        shock_type: shockType,
+        shock_intensity: shockIntensity,
+      }
+      const data = await runSimulation(payload)
       setResults(data)
       // Scroll to results
       setTimeout(() => {
@@ -74,8 +82,15 @@ export default function Simulator() {
       const { baseline, ...policyDefaults } = defaults
       setPolicies(policyDefaults)
     }
+    setShockType(null)
+    setShockIntensity('medium')
     setResults(null)
     setError(null)
+  }
+
+  const handleShockChange = ({ shock_type, shock_intensity }) => {
+    setShockType(shock_type)
+    setShockIntensity(shock_intensity)
   }
 
   // Prepare chart data from results
@@ -131,6 +146,13 @@ export default function Simulator() {
                 ))}
               </div>
 
+              {/* External Shock Selector */}
+              <ShockSelector
+                shockType={shockType}
+                shockIntensity={shockIntensity}
+                onChange={handleShockChange}
+              />
+
               <div className="sim-actions">
                 <button className="btn btn--primary" onClick={handleSimulate} disabled={loading}>
                   {loading ? 'Simulating…' : 'Run Simulation'}
@@ -178,9 +200,24 @@ export default function Simulator() {
               <>
                 {/* Metrics */}
                 <div>
-                  <p className="text-caption" style={{ marginBottom: 'var(--space-4)' }}>
-                    Projected Outcomes
-                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
+                    <p className="text-caption" style={{ margin: 0 }}>
+                      Projected Outcomes
+                    </p>
+                    {results?.shock_active && (
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                        padding: '0.2rem 0.6rem', borderRadius: '99px',
+                        background: 'var(--accent-subtle)',
+                        border: '1px solid rgba(45, 90, 61, 0.15)',
+                        fontSize: '0.72rem', fontFamily: 'var(--font-sans)',
+                        color: 'var(--accent)', fontWeight: 500,
+                      }}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+                        {results.shock_label}
+                      </span>
+                    )}
+                  </div>
                   <div className="grid grid--5 sim-metrics">
                     <MetricCard
                       label="GDP Growth"

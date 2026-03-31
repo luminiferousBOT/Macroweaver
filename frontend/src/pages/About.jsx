@@ -425,10 +425,123 @@ export default function About() {
           </div>
         </section>
 
+        {/* ─── External Shock Simulation ─────────────────────── */}
+        <section className="about-section">
+          <div className="about-section__header">
+            <span className="about-section__number">07</span>
+            <h2 className="text-h2">External Shock Simulation</h2>
+          </div>
+          <div className="about-section__body">
+            <p className="text-body">
+              Real economies don't operate in a vacuum — they are constantly buffeted
+              by <strong>exogenous shocks</strong>: events that arise outside the
+              domestic policy framework but dramatically alter economic outcomes.
+              Macroweaver lets you simulate four canonical shock scenarios on top
+              of your policy choices.
+            </p>
+
+            <p className="text-body" style={{ marginTop: 'var(--space-4)' }}>
+              Shocks are applied as <strong>additive adjustments</strong> to the
+              simulation output. This means they modify the projected indicators
+              <em> after</em> the core policy model has run, preserving the
+              integrity of the policy simulation while layering in external effects.
+            </p>
+
+            <div className="about-grid" style={{ marginTop: 'var(--space-6)' }}>
+              <div className="about-output">
+                <div className="about-output__icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-h3">Oil Price Shock</h4>
+                  <p className="text-body">
+                    A sudden spike in global crude oil prices. This raises input costs
+                    across the economy, pushing inflation up (+2.5pp), dampening growth
+                    (−1.5pp), and worsening the trade balance (−0.6pp) as import bills
+                    surge. Fiscal pressure also increases (+0.8pp deficit).
+                  </p>
+                </div>
+              </div>
+              <div className="about-output">
+                <div className="about-output__icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                    <polyline points="17 6 23 6 23 12" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-h3">Global Recession</h4>
+                  <p className="text-body">
+                    A synchronized slowdown in major trading partners. Demand for exports
+                    collapses, dragging GDP growth down sharply (−3.0pp). Unemployment
+                    rises significantly (+1.8pp). Trade balance deteriorates (−1.5pp).
+                    Interestingly, inflation may ease (−0.5pp) due to reduced demand.
+                  </p>
+                </div>
+              </div>
+              <div className="about-output">
+                <div className="about-output__icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="1" y="3" width="15" height="13" />
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-h3">Export Boom</h4>
+                  <p className="text-body">
+                    A positive shock — perhaps driven by a new trade agreement or
+                    technological advantage. GDP growth surges (+2.0pp), unemployment
+                    falls (−0.8pp), and the trade balance improves dramatically (+2.5pp).
+                    The fiscal deficit narrows (−0.5pp) as tax revenues rise.
+                  </p>
+                </div>
+              </div>
+              <div className="about-output">
+                <div className="about-output__icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-h3">Pandemic Shock</h4>
+                  <p className="text-body">
+                    A severe public health crisis forcing economic shutdowns. This is the
+                    most devastating shock: GDP contracts sharply (−4.5pp), unemployment
+                    spikes (+3.0pp), fiscal deficits balloon (+2.5pp) from emergency
+                    spending, and trade disruptions worsen the balance (−1.0pp).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-body" style={{ marginTop: 'var(--space-6)' }}>
+              Each shock can be applied at three intensity levels:
+              <strong> Low</strong> (0.5× the base adjustment),
+              <strong> Medium</strong> (1.0× — the values described above), and
+              <strong> High</strong> (1.5× — amplified effects). The values shown
+              above are for medium intensity.
+            </p>
+
+            <p className="text-body" style={{ marginTop: 'var(--space-4)' }}>
+              When a shock is active, the AI explanation layer is also informed of
+              the shock context, ensuring that generated analyses accurately reflect
+              the combined effect of both policy decisions and external events. In
+              the Compare page, each scenario can have a different shock applied
+              independently, allowing you to explore questions like: <em>"How does
+              an expansionary fiscal policy perform under a global recession vs.
+              an oil price shock?"</em>
+            </p>
+          </div>
+        </section>
+
         {/* ─── Data Source ───────────────────────────────── */}
         <section className="about-section" style={{ paddingBottom: 'var(--space-16)' }}>
           <div className="about-section__header">
-            <span className="about-section__number">06</span>
+            <span className="about-section__number">08</span>
             <h2 className="text-h2">Where the Data Comes From</h2>
           </div>
           <div className="about-section__body">

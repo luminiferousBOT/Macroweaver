@@ -21,6 +21,7 @@ from backend.models.economic_model import (
     EconomicSimulator,
     PolicyInput,
     SimulationResult,
+    SHOCK_LABELS,
 )
 
 router = APIRouter(prefix="/api", tags=["simulation"])
@@ -73,7 +74,8 @@ async def simulate(policy: PolicyInputSchema):
     Run a single policy simulation.
 
     Accepts policy lever values, runs the economic model,
-    and returns projected outcomes with an AI explanation.
+    optionally applies an external shock, and returns
+    projected outcomes with an AI explanation.
     """
     try:
         policy_input = PolicyInput(
@@ -84,12 +86,26 @@ async def simulate(policy: PolicyInputSchema):
             import_tariff=policy.import_tariff,
         )
         result: SimulationResult = _simulator.simulate(policy_input)
+
+        # Apply external shock if provided
+        shock_type = policy.shock_type
+        shock_intensity = policy.shock_intensity or "medium"
+        if shock_type:
+            result = _simulator.apply_shock(result, shock_type, shock_intensity)
+
         response = result.to_dict()
 
-        # Generate AI explanation
+        # Attach shock metadata
+        if shock_type:
+            response["shock_active"] = shock_type
+            response["shock_label"] = SHOCK_LABELS.get(shock_type, shock_type)
+
+        # Generate AI explanation (with shock context)
         deltas = _compute_deltas(policy)
         response["ai_explanation"] = await _explainer.explain_single(
-            deltas, response
+            deltas, response,
+            shock_type=shock_type,
+            shock_intensity=shock_intensity,
         )
 
         return response
@@ -108,7 +124,8 @@ async def compare(request: ComparisonRequestSchema):
     Compare two policies side-by-side.
 
     Returns results for both policies and an AI-generated
-    comparison analysis.
+    comparison analysis.  Each scenario may have its own
+    external shock applied independently.
     """
     try:
         policy_a = PolicyInput(
@@ -129,24 +146,51 @@ async def compare(request: ComparisonRequestSchema):
         result_a = _simulator.simulate(policy_a)
         result_b = _simulator.simulate(policy_b)
 
+        # Apply shocks independently to each scenario
+        shock_a_type = request.policy_a.shock_type
+        shock_a_intensity = request.policy_a.shock_intensity or "medium"
+        shock_b_type = request.policy_b.shock_type
+        shock_b_intensity = request.policy_b.shock_intensity or "medium"
+
+        if shock_a_type:
+            result_a = _simulator.apply_shock(result_a, shock_a_type, shock_a_intensity)
+        if shock_b_type:
+            result_b = _simulator.apply_shock(result_b, shock_b_type, shock_b_intensity)
+
         response_a = result_a.to_dict()
         response_b = result_b.to_dict()
+
+        # Attach shock metadata
+        if shock_a_type:
+            response_a["shock_active"] = shock_a_type
+            response_a["shock_label"] = SHOCK_LABELS.get(shock_a_type, shock_a_type)
+        if shock_b_type:
+            response_b["shock_active"] = shock_b_type
+            response_b["shock_label"] = SHOCK_LABELS.get(shock_b_type, shock_b_type)
 
         # Generate individual explanations
         deltas_a = _compute_deltas(request.policy_a)
         deltas_b = _compute_deltas(request.policy_b)
 
         response_a["ai_explanation"] = await _explainer.explain_single(
-            deltas_a, response_a
+            deltas_a, response_a,
+            shock_type=shock_a_type,
+            shock_intensity=shock_a_intensity,
         )
         response_b["ai_explanation"] = await _explainer.explain_single(
-            deltas_b, response_b
+            deltas_b, response_b,
+            shock_type=shock_b_type,
+            shock_intensity=shock_b_intensity,
         )
 
         # Generate comparative analysis
         ai_comparison = await _explainer.explain_comparison(
             deltas_a, response_a,
             deltas_b, response_b,
+            shock_a_type=shock_a_type,
+            shock_a_intensity=shock_a_intensity,
+            shock_b_type=shock_b_type,
+            shock_b_intensity=shock_b_intensity,
         )
 
         return {

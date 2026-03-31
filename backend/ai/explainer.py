@@ -14,6 +14,8 @@ import os
 import logging
 from typing import Dict, Optional
 
+from backend.models.economic_model import SHOCK_LABELS
+
 logger = logging.getLogger(__name__)
 
 
@@ -51,34 +53,47 @@ def _direction_word(value: float) -> str:
 def _fallback_explain_single(
     policy_deltas: Dict[str, float],
     results: dict,
+    shock_type: Optional[str] = None,
+    shock_intensity: Optional[str] = None,
 ) -> str:
     """Generate a rule-based explanation when AI API is unavailable."""
     factors = _identify_dominant_factors(policy_deltas)
-    if not factors:
+    lines = []
+
+    # Shock context first
+    if shock_type:
+        label = SHOCK_LABELS.get(shock_type, shock_type)
+        intensity_text = (shock_intensity or "medium").capitalize()
+        lines.append(
+            f"⚡ An external {label} ({intensity_text} intensity) is active, "
+            f"significantly influencing the projected outcomes."
+        )
+
+    if not factors and not shock_type:
         return (
             "No significant policy changes were made. "
             "The economic indicators remain at baseline levels."
         )
 
-    primary = factors[0]
+    if factors:
+        primary = factors[0]
+        direction = "increased" if primary[1] > 0 else "decreased"
+        lines.append(
+            f"The most significant policy change is a {abs(primary[1]):.1f} "
+            f"percentage-point {direction} in {primary[0]}."
+        )
+
     gdp = results.get("gdp_growth", 0)
     inflation = results.get("inflation", 0)
     unemployment = results.get("unemployment", 0)
     deficit = results.get("fiscal_deficit", 0)
 
-    lines = []
-
-    # Lead with the dominant policy lever
-    direction = "increased" if primary[1] > 0 else "decreased"
-    lines.append(
-        f"The most significant policy change is a {abs(primary[1]):.1f} "
-        f"percentage-point {direction} in {primary[0]}."
-    )
-
     # GDP
     lines.append(
         f"GDP growth is projected at {gdp:.2f}%, reflecting the "
-        f"combined effect of the policy changes."
+        f"combined effect of the policy changes"
+        + (f" and the {SHOCK_LABELS.get(shock_type, '')} shock" if shock_type else "")
+        + "."
     )
 
     # Inflation
@@ -110,6 +125,10 @@ def _fallback_explain_comparison(
     results_a: dict,
     policy_b_deltas: Dict[str, float],
     results_b: dict,
+    shock_a_type: Optional[str] = None,
+    shock_a_intensity: Optional[str] = None,
+    shock_b_type: Optional[str] = None,
+    shock_b_intensity: Optional[str] = None,
 ) -> str:
     """Generate a rule-based comparison when AI API is unavailable."""
     gdp_a = results_a.get("gdp_growth", 0)
@@ -122,6 +141,17 @@ def _fallback_explain_comparison(
     def_b = results_b.get("fiscal_deficit", 0)
 
     lines = []
+
+    # Note active shocks
+    shock_notes = []
+    if shock_a_type:
+        label = SHOCK_LABELS.get(shock_a_type, shock_a_type)
+        shock_notes.append(f"Scenario A is under a {label} ({(shock_a_intensity or 'medium').capitalize()} intensity)")
+    if shock_b_type:
+        label = SHOCK_LABELS.get(shock_b_type, shock_b_type)
+        shock_notes.append(f"Scenario B is under a {label} ({(shock_b_intensity or 'medium').capitalize()} intensity)")
+    if shock_notes:
+        lines.append("⚡ " + "; ".join(shock_notes) + ".")
 
     # GDP comparison
     if gdp_a > gdp_b:
@@ -167,6 +197,8 @@ def _fallback_explain_comparison(
 def _build_single_prompt(
     policy_deltas: Dict[str, float],
     results: dict,
+    shock_type: Optional[str] = None,
+    shock_intensity: Optional[str] = None,
 ) -> str:
     """Build the LLM prompt for a single simulation."""
     changes = []
@@ -184,10 +216,17 @@ def _build_single_prompt(
 
     changes_str = "\n".join(changes) if changes else "  (no changes from baseline)"
 
+    shock_section = ""
+    if shock_type:
+        label = SHOCK_LABELS.get(shock_type, shock_type)
+        intensity_text = (shock_intensity or "medium").capitalize()
+        shock_section = f"""\n\nActive External Shock: {label} ({intensity_text} intensity)
+This shock represents a significant exogenous economic event that affects all indicators independently of policy choices. Your analysis MUST address the combined effect of both the policy changes and this external shock."""
+
     return f"""You are a senior economics advisor. Analyze these simulated economic policy results for India's economy. Explain them in clear, accessible language suitable for a general audience. Be specific about cause and effect — connect each policy change to its economic impact. Keep your response to 3–4 sentences.
 
 Policy changes from baseline:
-{changes_str}
+{changes_str}{shock_section}
 
 Projected economic outcomes:
   • GDP Growth: {results.get('gdp_growth', 0):.2f}%
@@ -204,6 +243,10 @@ def _build_comparison_prompt(
     results_a: dict,
     policy_b_deltas: Dict[str, float],
     results_b: dict,
+    shock_a_type: Optional[str] = None,
+    shock_a_intensity: Optional[str] = None,
+    shock_b_type: Optional[str] = None,
+    shock_b_intensity: Optional[str] = None,
 ) -> str:
     """Build the LLM prompt for a policy comparison."""
     readable = {
@@ -231,6 +274,17 @@ def _build_comparison_prompt(
             f"  • Trade Balance: {r.get('trade_balance', 0):.2f}% of GDP"
         )
 
+    shock_context = ""
+    shock_parts = []
+    if shock_a_type:
+        label = SHOCK_LABELS.get(shock_a_type, shock_a_type)
+        shock_parts.append(f"Policy A is under a {label} ({(shock_a_intensity or 'medium').capitalize()} intensity)")
+    if shock_b_type:
+        label = SHOCK_LABELS.get(shock_b_type, shock_b_type)
+        shock_parts.append(f"Policy B is under a {label} ({(shock_b_intensity or 'medium').capitalize()} intensity)")
+    if shock_parts:
+        shock_context = "\n\nActive External Shocks:\n" + "\n".join(f"  • {s}" for s in shock_parts) + "\nInclude the impact of these shocks in your analysis."
+
     return f"""You are a senior economics advisor. Compare these two economic policy scenarios for India's economy. Explain which policy performs better overall and highlight the key trade-offs. Be specific and concise — 4–5 sentences maximum.
 
 POLICY A changes:
@@ -241,7 +295,7 @@ POLICY A results:
 POLICY B changes:
 {_fmt_policy(policy_b_deltas)}
 POLICY B results:
-{_fmt_results(results_b)}
+{_fmt_results(results_b)}{shock_context}
 
 Provide your comparative analysis:"""
 
@@ -281,12 +335,18 @@ class AIExplainer:
         self,
         policy_deltas: Dict[str, float],
         results: dict,
+        shock_type: Optional[str] = None,
+        shock_intensity: Optional[str] = None,
     ) -> str:
         """Generate an explanation for a single simulation."""
         if not self.ai_available:
-            return _fallback_explain_single(policy_deltas, results)
+            return _fallback_explain_single(
+                policy_deltas, results, shock_type, shock_intensity
+            )
 
-        prompt = _build_single_prompt(policy_deltas, results)
+        prompt = _build_single_prompt(
+            policy_deltas, results, shock_type, shock_intensity
+        )
 
         try:
             completion = self._client.chat.completions.create(
@@ -309,7 +369,9 @@ class AIExplainer:
 
         except Exception as e:
             logger.error(f"Groq API error: {e}")
-            return _fallback_explain_single(policy_deltas, results)
+            return _fallback_explain_single(
+                policy_deltas, results, shock_type, shock_intensity
+            )
 
     async def explain_comparison(
         self,
@@ -317,15 +379,23 @@ class AIExplainer:
         results_a: dict,
         policy_b_deltas: Dict[str, float],
         results_b: dict,
+        shock_a_type: Optional[str] = None,
+        shock_a_intensity: Optional[str] = None,
+        shock_b_type: Optional[str] = None,
+        shock_b_intensity: Optional[str] = None,
     ) -> str:
         """Generate a comparative analysis of two policies."""
         if not self.ai_available:
             return _fallback_explain_comparison(
-                policy_a_deltas, results_a, policy_b_deltas, results_b
+                policy_a_deltas, results_a, policy_b_deltas, results_b,
+                shock_a_type, shock_a_intensity,
+                shock_b_type, shock_b_intensity,
             )
 
         prompt = _build_comparison_prompt(
-            policy_a_deltas, results_a, policy_b_deltas, results_b
+            policy_a_deltas, results_a, policy_b_deltas, results_b,
+            shock_a_type, shock_a_intensity,
+            shock_b_type, shock_b_intensity,
         )
 
         try:
@@ -350,7 +420,9 @@ class AIExplainer:
         except Exception as e:
             logger.error(f"Groq API error: {e}")
             return _fallback_explain_comparison(
-                policy_a_deltas, results_a, policy_b_deltas, results_b
+                policy_a_deltas, results_a, policy_b_deltas, results_b,
+                shock_a_type, shock_a_intensity,
+                shock_b_type, shock_b_intensity,
             )
 
 
