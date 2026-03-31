@@ -250,13 +250,20 @@
 .about-outputs {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 .about-output {
   display: flex;
   gap: var(--space-5);
   align-items: flex-start;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border);
+}
+
+.about-output:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .about-output__icon {

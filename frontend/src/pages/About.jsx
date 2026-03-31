@@ -447,7 +447,7 @@ export default function About() {
               integrity of the policy simulation while layering in external effects.
             </p>
 
-            <div className="about-grid" style={{ marginTop: 'var(--space-6)' }}>
+            <div className="about-outputs" style={{ marginTop: 'var(--space-6)' }}>
               <div className="about-output">
                 <div className="about-output__icon">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
