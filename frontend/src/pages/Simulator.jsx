@@ -157,7 +157,13 @@ export default function Simulator() {
 
               <div className="sim-actions">
                 <button className="btn btn--primary" onClick={handleSimulate} disabled={loading}>
-                  {loading ? 'Simulating…' : 'Run Simulation'}
+                  {loading ? (
+                    <span className="simulating-dots">
+                      Simulating<span>.</span><span>.</span><span>.</span>
+                    </span>
+                  ) : (
+                    'Run Simulation'
+                  )}
                   {!loading && <span className="btn__icon">→</span>}
                 </button>
                 <button className="btn btn--secondary btn--sm" onClick={handleReset}>
