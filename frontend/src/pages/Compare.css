@@ -130,6 +130,24 @@
   padding-bottom: var(--space-16);
 }
 
+@keyframes loadingDots {
+  0% { opacity: 0.2; }
+  20% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+.simulating-dots span {
+  animation: loadingDots 1.4s infinite both;
+}
+
+.simulating-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.simulating-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
 @media (max-width: 768px) {
   .compare-panels {
     grid-template-columns: 1fr;

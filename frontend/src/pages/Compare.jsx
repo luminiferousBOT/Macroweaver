@@ -233,7 +233,13 @@ export default function Compare() {
         {/* ─── Compare Button ───────────────────────────── */}
         <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--space-8) 0' }}>
           <button className="btn btn--primary btn--lg" onClick={handleCompare} disabled={loading}>
-            {loading ? 'Comparing…' : 'Compare Scenarios'}
+            {loading ? (
+              <span className="simulating-dots">
+                Comparing<span>.</span><span>.</span><span>.</span>
+              </span>
+            ) : (
+              'Compare Scenarios'
+            )}
             {!loading && <span className="btn__icon">→</span>}
           </button>
         </div>
